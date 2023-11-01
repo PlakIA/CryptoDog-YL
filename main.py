@@ -93,8 +93,15 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         with open(filepath, 'rb') as f:
-            with open('/'.join(filepath.split('/')[:-1]) + '/checksum_sha256.txt', 'w', encoding='utf8') as out_f:
-                out_f.write(hashlib.file_digest(f, 'sha256').hexdigest() + '\t' + filepath)
+            hash_object = hashlib.sha256()
+            while True:
+                data = f.read(65536)
+                if not data:
+                    break
+                hash_object.update(data)
+
+        with open('/'.join(filepath.split('/')[:-1]) + '/checksum_sha256.txt', 'w', encoding='utf8') as f:
+            f.write(hash_object.hexdigest() + '\t' + filepath)
 
     def verify_checksum_file(self):
         filepath = QFileDialog.getOpenFileName(self, 'Select Checksum File to Verify', '',
@@ -106,12 +113,19 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             checksum, data_filepath = f.read().split('\t')
             if not os.path.exists(data_filepath):
                 self.message_display('Failed', f"File '{data_filepath.split('/')[-1]}' was not found")
-            with open(data_filepath, 'rb') as data_f:
-                data_checksum = hashlib.file_digest(data_f, 'sha256').hexdigest()
-                if data_checksum == checksum:
-                    self.message_display('Good', 'The file is not damaged', msg_type=QMessageBox.Information)
-                else:
-                    self.message_display('Failed', 'The file is damaged!', msg_type=QMessageBox.Critical)
+
+        with open(data_filepath, 'rb') as f:
+            hash_object = hashlib.sha256()
+            while True:
+                data = f.read(65536)
+                if not data:
+                    break
+                hash_object.update(data)
+
+        if hash_object.hexdigest() == checksum:
+            self.message_display('Good', 'The file is not damaged', msg_type=QMessageBox.Information)
+        else:
+            self.message_display('Failed', 'The file is damaged!', msg_type=QMessageBox.Critical)
 
     def nokey_combobox_update(self):
         self.nokey_textEdit_output.setPlainText('')
