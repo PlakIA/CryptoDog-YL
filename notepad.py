@@ -57,8 +57,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.message_display('Error', "You don't have secret certificates")
             return
         passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
-        decrypted = self.gpg.decrypt(self.plainTextEdit.toPlainText(), always_trust=True, passphrase=passwd)
-        if not decrypted.ok:
-            self.message_display('Fail', 'Failed to decrypt', msg_type=QMessageBox.Critical)
-        else:
-            self.plainTextEdit.setPlainText(str(decrypted))
+        if ok_pressed:
+            decrypted = self.gpg.decrypt(self.plainTextEdit.toPlainText(), always_trust=True, passphrase=passwd)
+            if not decrypted.ok:
+                self.message_display('Fail', 'Failed to decrypt', msg_type=QMessageBox.Critical)
+            else:
+                self.plainTextEdit.setPlainText(str(decrypted))
