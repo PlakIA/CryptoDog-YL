@@ -10,7 +10,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, *args):
         super().__init__()
 
-        self.gpg = gnupg.GPG(gnupghome='gpghome', verbose=True)
+        self.gpg = gnupg.GPG(gnupghome='gpghome')
         self.gpg.encoding = 'utf-8'
 
         self.connection = sqlite3.connect("database.sqlite")

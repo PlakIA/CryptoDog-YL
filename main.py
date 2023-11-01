@@ -236,7 +236,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                                                     expire_date=ex_date, passphrase=passwd, no_protection=no_passwd)
 
         generated = self.gpg.gen_key(input_data)
-        if generated != 'ok':
+        if generated.status != 'ok':
             self.message_display('Error', 'Failed to create new certificate', msg_type=QMessageBox.Critical)
         self.db_update()
 
