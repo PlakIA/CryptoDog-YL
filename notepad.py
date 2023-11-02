@@ -36,12 +36,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
         msg.exec_()
 
     def encrypt(self):
-        result = self.cursor.execute('''SELECT uid FROM Certificates''').fetchall()
-        if not result:
+        uids = self.cursor.execute('''SELECT uid FROM Certificates''').fetchall()
+        if not uids:
             self.message_display('Error', "You don't have public certificates")
             return
         certs = list()
-        for i in result:
+        for i in uids:
             certs.append(*i)
 
         cert, ok_pressed = QInputDialog.getItem(self, "Encryption", "Encrypt for:", certs, 0, False)

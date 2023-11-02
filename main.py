@@ -23,7 +23,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
 
         if not os.path.exists('gpghome'):
             os.mkdir('gpghome')
-        self.gpg = gnupg.GPG(gnupghome='gpghome')
+        self.gpg = gnupg.GPG(gnupghome='gpghome', verbose=True)
         self.gpg.encoding = 'utf-8'
 
         if not os.path.exists('database.sqlite'):
@@ -110,7 +110,11 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         with open(filepath, 'r', encoding='utf8') as f:
-            checksum, data_filepath = f.read().split('\t')
+            try:
+                checksum, data_filepath = f.read().split('\t')
+            except ValueError:
+                self.message_display('Fail', 'Wrong checksum file')
+                return
             if not os.path.exists(data_filepath):
                 self.message_display('Failed', f"File '{data_filepath.split('/')[-1]}' was not found")
 
@@ -296,14 +300,16 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         imported = self.gpg.import_keys_file(filepath)
-        if imported.results[0]['ok'] != '1':
-            self.message_display('Not imported', 'The certificate was not imported')
+        if 'ok' not in imported.results[0].keys():
+            self.message_display('Not imported', 'The certificate was not imported',
+                                 details=imported.results[0]['text'])
+            return
         self.gpg.trust_keys(imported.results[0]['fingerprint'], 'TRUST_FULLY')
         self.db_update()
 
-        result = self.cursor.execute('''SELECT type FROM Certificates WHERE fingerprint = ?''',
-                                     (imported.results[0]['fingerprint'],)).fetchall()
-        if result[0][0] == 'secret':
+        key_type = self.cursor.execute('''SELECT type FROM Certificates WHERE fingerprint = ?''',
+                                       (imported.results[0]['fingerprint'],)).fetchall()[0][0]
+        if key_type == 'secret':
             self.gpg.trust_keys(imported.results[0]['fingerprint'], 'TRUST_ULTIMATE')
             self.db_update()
 
@@ -314,13 +320,13 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         try:
-            result = self.cursor.execute('''SELECT keyid FROM Certificates WHERE fingerprint = ?''',
-                                         (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()
+            keyid = self.cursor.execute('''SELECT keyid FROM Certificates WHERE fingerprint = ?''',
+                                        (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()[0][0]
             path = QFileDialog.getSaveFileName(self, 'Export OpenPGP Certificates', 'public.asc',
                                                'OpenPGP Certificates (*.asc *.gpg *.pgp)')[0]
             if not path:
                 return
-            self.gpg.export_keys(result[0][0], output=path)
+            self.gpg.export_keys(keyid, output=path)
         except IndexError:
             self.message_display('Error', 'Please select a certificate to export')
 
@@ -331,14 +337,20 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         try:
-            result = self.cursor.execute('''SELECT keyid FROM Certificates WHERE fingerprint = ?''',
-                                         (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()
+            keyid = self.cursor.execute('''SELECT keyid FROM Certificates WHERE fingerprint = ?''',
+                                        (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()[0][0]
+
+            if not self.cursor.execute('''SELECT * FROM Certificates WHERE keyid = ? AND type = "secret"''',
+                                       (keyid,)).fetchall():
+                self.message_display('Fail', 'You do not have the private key for this certificate')
+                return
+
             path = QFileDialog.getSaveFileName(self, 'Secret Key Backup', 'SECRET.asc',
                                                'OpenPGP Certificates (*.asc *.gpg *.pgp)')[0]
             if not path:
                 return
             passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
-            self.gpg.export_keys(result[0][0], secret=True, passphrase=passwd, output=path)
+            self.gpg.export_keys(keyid, secret=True, passphrase=passwd, output=path)
         except IndexError:
             self.message_display('Error', 'Please select a certificate to export')
 
@@ -349,9 +361,9 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         try:
-            result = self.cursor.execute('''SELECT type FROM Certificates WHERE fingerprint = ?''',
-                                         (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()
-            if result[0][0] == 'secret':
+            key_type = self.cursor.execute('''SELECT type FROM Certificates WHERE fingerprint = ?''',
+                                           (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()[0][0]
+            if key_type == 'secret':
                 passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
                 self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text(), secret=True, passphrase=passwd)
             self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text())
@@ -360,8 +372,8 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             self.message_display('Error', 'Please select a certificate to delete')
 
     def encrypt(self):
-        result = self.cursor.execute('''SELECT uid FROM Certificates''').fetchall()
-        if not result:
+        uids = self.cursor.execute('''SELECT uid FROM Certificates''').fetchall()
+        if not uids:
             self.message_display('Error', "You don't have any certificates")
             return
 
@@ -374,7 +386,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                                                    'OpenPGP Files (*.gpg *.pgp)')[0]
 
         certs = list()
-        for i in result:
+        for i in uids:
             certs.append(*i)
 
         cert, ok_pressed = QInputDialog.getItem(self, "Encryption", "Encrypt for:", certs, 0, False)
@@ -407,8 +419,8 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                 f.write(decrypted.data)
 
     def sign(self):
-        result = self.cursor.execute('''SELECT uid FROM Certificates WHERE type="secret"''').fetchall()
-        if not result:
+        uids = self.cursor.execute('''SELECT uid FROM Certificates WHERE type="secret"''').fetchall()
+        if not uids:
             self.message_display('Error', "You don't have secret certificates")
             return
 
@@ -418,7 +430,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         certs = list()
-        for i in result:
+        for i in uids:
             certs.append(*i)
 
         cert, ok_pressed = QInputDialog.getItem(self, "Sign", "Sign as:", certs, 0, False)
@@ -431,10 +443,13 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             args.extend(['--default-key', signer])
             args.extend(['--output', filepath + '.sig'])
             args.append(filepath)
-            self.gpg._handle_io(args, filepath, self.gpg.result_map['sign'](self.gpg), passphrase=passwd, binary=True)
+            signed = self.gpg._handle_io(args, filepath, self.gpg.result_map['sign'](self.gpg), passphrase=passwd,
+                                         binary=True)
+            if signed.status != 'signature created':
+                self.message_display('Fail', 'The file was not signed')
 
     def verify(self):
-        result = self.cursor.execute('''SELECT uid FROM Certificates''').fetchall()
+        result = self.cursor.execute('''SELECT * FROM Certificates''').fetchall()
         if not result:
             self.message_display('Error', "You don't have any certificates")
             return

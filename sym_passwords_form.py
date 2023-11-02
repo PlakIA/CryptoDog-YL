@@ -1,9 +1,9 @@
 import sqlite3
-import pyperclip
 
+import pyperclip
 from PyQt5.QtWidgets import QMainWindow, QInputDialog
+
 from ui.select_password import Ui_MainWindow
-import main
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
