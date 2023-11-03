@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ui.theme_resources import resources
 
 
 class Ui_MainWindow(object):
@@ -23,6 +22,9 @@ class Ui_MainWindow(object):
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(650, 550))
         MainWindow.setMaximumSize(QtCore.QSize(650, 550))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(".\\ui\\../Untitled-1.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         MainWindow.setLayoutDirection(QtCore.Qt.LeftToRight)
         MainWindow.setAutoFillBackground(False)
         with open('./ui/theme_resources/stylesheet.qss', 'r', encoding='utf8') as f:
@@ -56,7 +58,7 @@ class Ui_MainWindow(object):
         self.gpg_tableWidget.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
         self.gpg_tableWidget.setHorizontalHeaderItem(3, item)
-        self.gpg_tableWidget.horizontalHeader().setVisible(True)
+        self.gpg_tableWidget.horizontalHeader().setVisible(False)
         self.gpg_tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.gpg_tableWidget.horizontalHeader().setDefaultSectionSize(150)
         self.gpg_tableWidget.horizontalHeader().setHighlightSections(True)
@@ -75,7 +77,7 @@ class Ui_MainWindow(object):
         self.nokey_label_2.setGeometry(QtCore.QRect(10, 240, 81, 16))
         self.nokey_label_2.setObjectName("nokey_label_2")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.tab_nokey)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(460, 20, 161, 141))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(460, 20, 161, 81))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -100,14 +102,6 @@ class Ui_MainWindow(object):
         self.nokey_btn_decrypt.setIcon(icon2)
         self.nokey_btn_decrypt.setObjectName("nokey_btn_decrypt")
         self.verticalLayout.addWidget(self.nokey_btn_decrypt)
-        self.nokey_label_warn = QtWidgets.QLabel(self.verticalLayoutWidget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.nokey_label_warn.setFont(font)
-        self.nokey_label_warn.setObjectName("nokey_label_warn")
-        self.verticalLayout.addWidget(self.nokey_label_warn)
         self.nokey_btn_copy = QtWidgets.QPushButton(self.tab_nokey)
         self.nokey_btn_copy.setGeometry(QtCore.QRect(370, 460, 70, 23))
         icon3 = QtGui.QIcon()
@@ -120,6 +114,14 @@ class Ui_MainWindow(object):
         self.nokey_textEdit_output = QtWidgets.QPlainTextEdit(self.tab_nokey)
         self.nokey_textEdit_output.setGeometry(QtCore.QRect(10, 260, 430, 200))
         self.nokey_textEdit_output.setObjectName("nokey_textEdit_output")
+        self.nokey_label_warn = QtWidgets.QLabel(self.tab_nokey)
+        self.nokey_label_warn.setGeometry(QtCore.QRect(460, 110, 159, 121))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nokey_label_warn.setFont(font)
+        self.nokey_label_warn.setObjectName("nokey_label_warn")
         self.tabWidget.addTab(self.tab_nokey, "")
         self.tab_sym = QtWidgets.QWidget()
         self.tab_sym.setObjectName("tab_sym")
@@ -323,8 +325,8 @@ class Ui_MainWindow(object):
         self.nokey_comboBox.setItemText(4, _translate("MainWindow", "SHA512"))
         self.nokey_btn_encrypt.setText(_translate("MainWindow", "Encrypt"))
         self.nokey_btn_decrypt.setText(_translate("MainWindow", "Decrypt"))
-        self.nokey_label_warn.setText(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
         self.nokey_btn_copy.setText(_translate("MainWindow", "Copy"))
+        self.nokey_label_warn.setText(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_nokey), _translate("MainWindow", "No Key"))
         self.sym_label.setText(_translate("MainWindow", "Output text:"))
         self.sym_label_2.setText(_translate("MainWindow", "Input text:"))

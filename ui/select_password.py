@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ui.theme_resources import resources
 
 
 class Ui_MainWindow(object):
@@ -63,6 +62,9 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Select Password"))
         self.comboBox.setItemText(0, _translate("MainWindow", "-"))
+        self.buttonBox.setToolTip(_translate("MainWindow", "The selected password will be copied to the clipboard"))
         self.btn_add.setText(_translate("MainWindow", "Add"))
         self.btn_delete.setText(_translate("MainWindow", "Delete"))
         self.btn_edit.setText(_translate("MainWindow", "Edit"))
+
+

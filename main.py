@@ -7,7 +7,7 @@ from datetime import datetime
 
 import gnupg
 import pyperclip
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QFileDialog, QInputDialog, QMessageBox
 
 import newkey_form
@@ -23,7 +23,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
 
         if not os.path.exists('gpghome'):
             os.mkdir('gpghome')
-        self.gpg = gnupg.GPG(gnupghome='gpghome', verbose=True)
+        self.gpg = gnupg.GPG(gnupghome='gpghome')
         self.gpg.encoding = 'utf-8'
 
         if not os.path.exists('database.sqlite'):
@@ -116,7 +116,17 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                 self.message_display('Fail', 'Wrong checksum file')
                 return
             if not os.path.exists(data_filepath):
-                self.message_display('Failed', f"File '{data_filepath.split('/')[-1]}' was not found")
+                user_response = QMessageBox.question(self, 'File not found',
+                                                     "The file specified in the checksum file was not found\n"
+                                                     "Do you want to specify the path to the file?",
+                                                     QMessageBox.Yes | QMessageBox.Cancel,
+                                                     QMessageBox.Cancel)
+
+                if user_response == QMessageBox.Yes:
+                    data_filepath = QFileDialog.getOpenFileName(self, 'Select File to Verify', '',
+                                                                'All files (*))')[0]
+                else:
+                    return
 
         with open(data_filepath, 'rb') as f:
             hash_object = hashlib.sha256()
@@ -134,6 +144,8 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
     def nokey_combobox_update(self):
         self.nokey_textEdit_output.setPlainText('')
         self.nokey_textEdit_output.setStyleSheet('')
+        self.nokey_label_warn.resize(160, 60)
+        self.nokey_label_warn.setPixmap(QPixmap(''))
         self.nokey_label_warn.setText('')
         if self.nokey_comboBox.currentText() == 'Base64':
             self.nokey_btn_decrypt.setVisible(True)
@@ -143,7 +155,10 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             self.nokey_btn_decrypt.setDisabled(True)
 
     def keyless_encryption(self):
+        self.nokey_label_warn.resize(160, 60)
+        self.nokey_label_warn.setPixmap(QPixmap(''))
         self.nokey_label_warn.setText('')
+        self.nokey_label_warn.setStyleSheet('')
         self.nokey_textEdit_output.setStyleSheet('')
         if self.nokey_comboBox.currentText() == 'MD5':
             self.nokey_textEdit_output.setPlainText(Hash.md5(self.nokey_textEdit_input.toPlainText()))
@@ -159,15 +174,26 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
     def b64_decryption(self):
         result = B64.decode(self.nokey_textEdit_input.toPlainText())
         if result == 'Decoding error':
+            self.nokey_label_warn.resize(160, 60)
+            self.nokey_label_warn.setPixmap(QPixmap(''))
             self.nokey_label_warn.setText('Decoding error!')
             self.nokey_label_warn.setStyleSheet('color: #b39205;')
             self.nokey_textEdit_output.setPlainText('')
         elif result == 'Easter Egg':
+            self.nokey_label_warn.resize(160, 60)
+            self.nokey_label_warn.setPixmap(QPixmap(''))
             self.nokey_label_warn.setText(u'\u2665')
             self.nokey_textEdit_output.setPlainText(u'\u2665')
             self.nokey_textEdit_output.setStyleSheet('font-size: 18pt;')
             self.nokey_label_warn.setStyleSheet('font-size: 36pt; color: #d54653;')
+        elif result == 'Easter Dog':
+            print(self.sym_label_warn.width())
+            self.nokey_label_warn.resize(162, 216)
+            self.nokey_label_warn.setPixmap(QPixmap(QImage('ui/images/original.jpg').scaled(162, 216)))
+            self.nokey_textEdit_output.setPlainText('')
         else:
+            self.nokey_label_warn.resize(160, 60)
+            self.nokey_label_warn.setPixmap(QPixmap(''))
             self.nokey_textEdit_output.setPlainText(result)
             self.nokey_label_warn.setText('')
             self.nokey_textEdit_output.setStyleSheet('')
@@ -364,10 +390,20 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             key_type = self.cursor.execute('''SELECT type FROM Certificates WHERE fingerprint = ?''',
                                            (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()[0][0]
             if key_type == 'secret':
-                passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
-                self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text(), secret=True, passphrase=passwd)
-            self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text())
-            self.db_update()
+                user_response = QMessageBox.question(self, 'Removing a secret certificate',
+                                                     "The certificate you want to delete has a private key\n"
+                                                     "Are you sure you want to delete it?",
+                                                     QMessageBox.Yes | QMessageBox.Cancel,
+                                                     QMessageBox.Cancel)
+
+                if user_response == QMessageBox.Yes:
+                    passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request',
+                                                              'Please enter your passphrase')
+                    self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text(), secret=True, passphrase=passwd)
+                    self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text())
+                    self.db_update()
+                else:
+                    return
         except IndexError:
             self.message_display('Error', 'Please select a certificate to delete')
 
@@ -384,6 +420,8 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
 
         end_filepath = QFileDialog.getSaveFileName(self, 'Select Path to Save the Encrypted File', f'{filepath}.gpg',
                                                    'OpenPGP Files (*.gpg *.pgp)')[0]
+        if not end_filepath:
+            return
 
         certs = list()
         for i in uids:
@@ -462,8 +500,10 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             data_filepath = filepath[:-4]
         else:
 
-            data_filepath = QFileDialog.getOpenFileName(self, 'Select Sign File to Verify', filepath[:-4],
+            data_filepath = QFileDialog.getOpenFileName(self, 'Select File to Verify', filepath[:-4],
                                                         'All files (*))')[0]
+            if not data_filepath:
+                return
 
         with open(filepath, 'rb') as f:
             verified = self.gpg.verify_file(f, data_filename=data_filepath)

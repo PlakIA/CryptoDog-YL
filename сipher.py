@@ -36,6 +36,8 @@ class B64:
     def decode(self: str) -> str:
         if self == 'RGFzaGEgUGxha3NpbmE=':
             return 'Easter Egg'
+        elif self == 'UGxha3NpbidzIERvZw==':
+            return 'Easter Dog'
         try:
             return base64.b64decode(self.encode()).decode()
         except binascii.Error:

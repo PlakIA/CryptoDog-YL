@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ui.theme_resources import resources
 
 
 class Ui_MainWindow(object):
@@ -25,7 +24,7 @@ class Ui_MainWindow(object):
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setGeometry(QtCore.QRect(10, 210, 251, 121))
         self.groupBox_2.setStyleSheet("background-color: #1b1e20;\n"
-"border-radius: 3px;")
+                                      "border-radius: 3px;")
         self.groupBox_2.setTitle("")
         self.groupBox_2.setObjectName("groupBox_2")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.groupBox_2)
@@ -48,7 +47,7 @@ class Ui_MainWindow(object):
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setGeometry(QtCore.QRect(10, 0, 251, 201))
         self.groupBox.setStyleSheet("background-color: #1b1e20;\n"
-"border-radius: 3px;")
+                                    "border-radius: 3px;")
         self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
         self.logo = QtWidgets.QLabel(self.groupBox)
@@ -101,7 +100,7 @@ class Ui_MainWindow(object):
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_3.setGeometry(QtCore.QRect(10, 340, 251, 161))
         self.groupBox_3.setStyleSheet("background-color: #1b1e20;\n"
-"border-radius: 3px;")
+                                      "border-radius: 3px;")
         self.groupBox_3.setTitle("")
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.groupBox_3)
@@ -157,12 +156,24 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "About"))
-        self.label.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Libraries used:</span></p></body></html>"))
-        self.label_lib.setText(_translate("MainWindow", "<html><head/><body><p>PyQt 5.15.10</p><p>PyCryptodome 3.19.0</p><p>python-gnupg 0.5.1</p></body></html>"))
-        self.title.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">CryptoDog</span><span style=\" font-size:14pt; font-weight:600;\"><br/></span><span style=\" font-size:11pt;\">Pre-release Edition!</span></p></body></html>"))
-        self.label_copyright.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Copyright</span><br/>(c) 2023 Iaroslav Plaksin</p></body></html>"))
-        self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">License:</span></p></body></html>"))
+        self.label.setText(_translate("MainWindow",
+                                      "<html><head/><body><p><span style=\" font-weight:600;\">Libraries used:</span></p></body></html>"))
+        self.label_lib.setText(_translate("MainWindow",
+                                          "<html><head/><body><p>PyQt 5.15.10</p><p>PyCryptodome 3.19.0</p><p>python-gnupg 0.5.1</p></body></html>"))
+        self.title.setText(_translate("MainWindow",
+                                      "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">CryptoDog 11.09.23</span><span style=\" font-size:14pt; font-weight:600;\"><br/></span><span style=\" font-size:11pt;\">CryptoDog</span></p></body></html>"))
+        self.label_copyright.setText(_translate("MainWindow",
+                                                "<html><head/><body><p><span style=\" font-weight:600;\">Copyright</span><br/>(c) 2023 Iaroslav Plaksin</p></body></html>"))
+        self.label_3.setText(_translate("MainWindow",
+                                        "<html><head/><body><p><span style=\" font-weight:600;\">License:</span></p></body></html>"))
         self.toolButton_license.setText(_translate("MainWindow", "Apache 2.0"))
-        self.label_6.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Authors:</span></p></body></html>"))
-        self.label_author.setText(_translate("MainWindow", "<html><head/><body><p>Iaroslav<br/><span style=\" font-style:italic;\">Author, code, desing</span></p></body></html>"))
-        self.label_pub.setText(_translate("MainWindow", "<html><head/><body><p>Plaksin\'s Network<br/><span style=\" font-style:italic;\">Publisher</span></p></body></html>"))
+        self.label_6.setText(_translate("MainWindow",
+                                        "<html><head/><body><p><span style=\" font-weight:600;\">Authors:</span></p></body></html>"))
+        self.label_author.setText(_translate("MainWindow",
+                                             "<html><head/><body><p>Iaroslav<br/><span style=\" font-style:italic;\">Author, code, desing</span></p></body></html>"))
+        self.label_pub.setText(_translate("MainWindow",
+                                          "<html><head/><body><p>Plaksin\'s Network<br/><span style=\" font-style:italic;\">Publisher</span></p></body></html>"))
+        self.toolButton_mail_publisher.setToolTip(_translate("MainWindow",
+                                                             "<html><head/><body><p>Send an email to<br/>plaksin.network@gmail.com</p></body></html>"))
+        self.toolButton_mail_author.setToolTip(_translate("MainWindow",
+                                                          "<html><head/><body><p>Send an emaill to<br/>Batov.I.A@yandex.ru</p></body></html>"))
