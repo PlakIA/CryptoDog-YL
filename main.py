@@ -400,10 +400,10 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                     passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request',
                                                               'Please enter your passphrase')
                     self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text(), secret=True, passphrase=passwd)
-                    self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text())
-                    self.db_update()
                 else:
                     return
+            self.gpg.delete_keys(self.gpg_tableWidget.selectedItems()[3].text())
+            self.db_update()
         except IndexError:
             self.message_display('Error', 'Please select a certificate to delete')
 
