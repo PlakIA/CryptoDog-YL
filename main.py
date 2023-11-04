@@ -389,7 +389,8 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
 
         try:
             key_type = self.cursor.execute('''SELECT type FROM Certificates WHERE fingerprint = ?''',
-                                           (self.gpg_tableWidget.selectedItems()[3].text(),)).fetchall()[0][0]
+                                           (self.gpg_tableWidget.selectedItems()[3].text(),)
+                                           ).fetchall()[0][0]
             if key_type == 'secret':
                 user_response = QMessageBox.question(self, 'Removing a secret certificate',
                                                      "The certificate you want to delete has a private key\n"
@@ -517,12 +518,13 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                                          f'Failed to verify signature authenticity\n\n'
                                          f'Status:\t{verified.status}\n', msg_type=QMessageBox.Critical)
         else:
+            sign_date = datetime.utcfromtimestamp(int(verified.sig_timestamp)).strftime("%Y-%m-%d %H:%M:%S")
             self.message_display('Signature', f'Data verified by signature\t\t\t\t\t\n'
                                               f'Valid signature by {verified.username}',
                                  details=f"Verified '{data_filepath}' with '{filepath}'\n"
                                          f'Valid signature by {verified.username}\n\n'
                                          f'Signer username: {verified.username}\n'
-                                         f'Signature date:\t{datetime.utcfromtimestamp(int(verified.sig_timestamp)).strftime("%Y-%m-%d %H:%M:%S")} (UTC+0)\n'
+                                         f'Signature date:\t{sign_date} (UTC+0)\n'
                                          f'Status:\t{verified.status}\n'
                                          f'Fingerprint:\t{verified.pubkey_fingerprint}',
                                  msg_type=QMessageBox.Information)

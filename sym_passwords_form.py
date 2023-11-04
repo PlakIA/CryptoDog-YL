@@ -41,7 +41,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     def delete_item(self):
         if self.comboBox.currentText() != '-':
-            self.cursor.execute('''DELETE FROM Passwords WHERE password = ?''', (self.comboBox.currentText(),))
+            self.cursor.execute('''DELETE FROM Passwords WHERE password = ?''',
+                                (self.comboBox.currentText(),))
             self.connection.commit()
             self.update_list()
 
