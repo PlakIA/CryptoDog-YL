@@ -376,6 +376,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             if not path:
                 return
             passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
+            passwd = passwd if passwd else None
             self.gpg.export_keys(keyid, secret=True, passphrase=passwd, output=path)
         except IndexError:
             self.message_display('Error', 'Please select a certificate to export')
@@ -447,6 +448,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             return
 
         passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
+        passwd = passwd if passwd else None
         decrypted = self.gpg.decrypt_file(filepath, always_trust=True, passphrase=passwd)
         if not decrypted.ok:
             self.message_display('Fail', 'Failed to decrypt file')
@@ -476,6 +478,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             signer = self.cursor.execute('''SELECT keyid FROM Certificates WHERE uid = ?''',
                                          (cert,)).fetchall()[0][0]
             passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
+            passwd = passwd if passwd else None
 
             args = ['--sign', '--detach-sign']
             args.extend(['--default-key', signer])

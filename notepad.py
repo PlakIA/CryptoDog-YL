@@ -1,9 +1,10 @@
 import sqlite3
-import pyperclip
 
-from PyQt5.QtWidgets import QMainWindow, QInputDialog, QMessageBox
-from ui.notepad import Ui_MainWindow
 import gnupg
+import pyperclip
+from PyQt5.QtWidgets import QMainWindow, QInputDialog, QMessageBox
+
+from ui.notepad import Ui_MainWindow
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
@@ -57,6 +58,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.message_display('Error', "You don't have secret certificates")
             return
         passwd, ok_pressed = QInputDialog.getText(self, 'Passphrase Request', 'Please enter your passphrase')
+        passwd = passwd if passwd else None
         if ok_pressed:
             decrypted = self.gpg.decrypt(self.plainTextEdit.toPlainText(), always_trust=True, passphrase=passwd)
             if not decrypted.ok:
