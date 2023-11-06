@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
         self.gpg_tableWidget.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
         self.gpg_tableWidget.setHorizontalHeaderItem(3, item)
-        self.gpg_tableWidget.horizontalHeader().setVisible(False)
+        self.gpg_tableWidget.horizontalHeader().setVisible(True)
         self.gpg_tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.gpg_tableWidget.horizontalHeader().setDefaultSectionSize(150)
         self.gpg_tableWidget.horizontalHeader().setHighlightSections(True)
