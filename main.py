@@ -150,7 +150,10 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
         if self.nokey_comboBox.currentText() == 'Base64':
             self.nokey_btn_decrypt.setVisible(True)
             self.nokey_btn_decrypt.setEnabled(True)
+            self.nokey_btn_encrypt.setText('Encode')
+            self.nokey_btn_decrypt.setText('Decode')
         else:
+            self.nokey_btn_encrypt.setText('Hash')
             self.nokey_btn_decrypt.setVisible(False)
             self.nokey_btn_decrypt.setDisabled(True)
 
@@ -173,6 +176,7 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
 
     def b64_decryption(self):
         result = B64.decode(self.nokey_textEdit_input.toPlainText())
+        print(result)
         if result == 'Decoding error':
             self.nokey_label_warn.resize(160, 60)
             self.nokey_label_warn.setPixmap(QPixmap(''))
