@@ -92,10 +92,11 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
         if not filepath:
             return
 
+        BUFFER_SIZE = 65536
         with open(filepath, 'rb') as f:
             hash_object = hashlib.sha256()
             while True:
-                data = f.read(65536)
+                data = f.read(BUFFER_SIZE)
                 if not data:
                     break
                 hash_object.update(data)
@@ -128,10 +129,11 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                 else:
                     return
 
+        BUFFER_SIZE = 65536
         with open(data_filepath, 'rb') as f:
             hash_object = hashlib.sha256()
             while True:
-                data = f.read(65536)
+                data = f.read(BUFFER_SIZE)
                 if not data:
                     break
                 hash_object.update(data)
