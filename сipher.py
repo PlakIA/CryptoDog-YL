@@ -1,5 +1,4 @@
 import base64
-import binascii
 import hashlib
 
 from Crypto.Cipher import ARC4, AES, DES, DES3
@@ -40,9 +39,7 @@ class B64:
             return 'Easter Dog'
         try:
             return base64.b64decode(self.encode()).decode()
-        except binascii.Error:
-            return 'Decoding error'
-        except UnicodeDecodeError:
+        except Exception:
             return 'Decoding error'
 
 
@@ -79,7 +76,7 @@ class AESx:
             plaintext = cipher.decrypt(ciphertext[16:])
             plaintext = unpad(plaintext, 16)
             return plaintext.decode()
-        except ValueError:
+        except Exception:
             return 'Decrypt error'
 
 
@@ -101,7 +98,7 @@ class SingleDES:
             plaintext = cipher.decrypt(ciphertext[8:])
             plaintext = unpad(plaintext, 8)
             return plaintext.decode()
-        except ValueError:
+        except Exception:
             return 'Decrypt error'
 
 
@@ -123,5 +120,5 @@ class TripleDES:
             plaintext = cipher.decrypt(ciphertext[8:])
             plaintext = unpad(plaintext, 8)
             return plaintext.decode()
-        except ValueError:
+        except Exception:
             return 'Decrypt error'

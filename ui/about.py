@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
         self.label_copyright = QtWidgets.QLabel(self.groupBox)
-        self.label_copyright.setGeometry(QtCore.QRect(10, 90, 141, 31))
+        self.label_copyright.setGeometry(QtCore.QRect(10, 90, 151, 31))
         self.label_copyright.setObjectName("label_copyright")
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.groupBox)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 130, 231, 61))
@@ -161,9 +161,9 @@ class Ui_MainWindow(object):
         self.label_lib.setText(_translate("MainWindow",
                                           "<html><head/><body><p>PyQt 5.15.10</p><p>PyCryptodome 3.19.0</p><p>python-gnupg 0.5.1</p></body></html>"))
         self.title.setText(_translate("MainWindow",
-                                      "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">CryptoDog 11.09.23</span><span style=\" font-size:14pt; font-weight:600;\"><br/></span><span style=\" font-size:11pt;\">CryptoDog</span></p></body></html>"))
+                                      "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">CryptoDog 01.14.24</span><span style=\" font-size:14pt; font-weight:600;\"><br/></span><span style=\" font-size:11pt;\">CryptoDog</span></p></body></html>"))
         self.label_copyright.setText(_translate("MainWindow",
-                                                "<html><head/><body><p><span style=\" font-weight:600;\">Copyright</span><br/>(c) 2023 Iaroslav Plaksin</p></body></html>"))
+                                                "<html><head/><body><p><span style=\" font-weight:600;\">Copyright</span><br/>(c) 2023-2024 Iaroslav Plaksin</p></body></html>"))
         self.label_3.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-weight:600;\">License:</span></p></body></html>"))
         self.toolButton_license.setText(_translate("MainWindow", "Apache 2.0"))

@@ -27,7 +27,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     def update_list(self):
         self.comboBox.clear()
-        self.comboBox.insertItem(0, '-')
+        self.comboBox.insertItem(0, '****')
         result = self.cursor.execute('''SELECT password FROM Passwords''').fetchall()
         for index, value in enumerate(result, start=1):
             self.comboBox.insertItem(index, *value)
@@ -40,14 +40,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.update_list()
 
     def delete_item(self):
-        if self.comboBox.currentText() != '-':
+        if self.comboBox.currentText() != '****':
             self.cursor.execute('''DELETE FROM Passwords WHERE password = ?''',
                                 (self.comboBox.currentText(),))
             self.connection.commit()
             self.update_list()
 
     def edit_item(self):
-        if self.comboBox.currentText() != '-':
+        if self.comboBox.currentText() != '****':
             passwd, ok_pressed = QInputDialog.getText(self, 'Edit password',
                                                       f'Change saved password <{self.comboBox.currentText()}> to:')
             if passwd:

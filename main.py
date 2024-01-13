@@ -178,7 +178,6 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
 
     def b64_decryption(self):
         result = B64.decode(self.nokey_textEdit_input.toPlainText())
-        print(result)
         if result == 'Decoding error':
             self.nokey_label_warn.resize(160, 60)
             self.nokey_label_warn.setPixmap(QPixmap(''))
@@ -193,7 +192,6 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             self.nokey_textEdit_output.setStyleSheet('font-size: 18pt;')
             self.nokey_label_warn.setStyleSheet('font-size: 36pt; color: #d54653;')
         elif result == 'Easter Dog':
-            print(self.sym_label_warn.width())
             self.nokey_label_warn.resize(162, 216)
             self.nokey_label_warn.setPixmap(QPixmap(QImage('ui/images/original.jpg').scaled(162, 216)))
             self.nokey_textEdit_output.setPlainText('')
