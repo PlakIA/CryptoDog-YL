@@ -12,7 +12,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QFileDi
 
 import newkey_form
 import notepad
-import sym_passwords_form
 from ui import main, about
 from сipher import Hash, B64, AESx, SingleDES, TripleDES, RC4
 
@@ -43,7 +42,6 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
         self.sym_btn_encrypt.clicked.connect(self.symmetric_encryption)
         self.sym_btn_decrypt.clicked.connect(self.symmetric_decryption)
         self.sym_btn_copy.clicked.connect(lambda: pyperclip.copy(self.sym_textEdit_output.toPlainText()))
-        self.sym_btn_select_passwd.clicked.connect(self.call_sym_select_password_form)
 
         self.actionAbout.triggered.connect(self.view_about)
         self.actionQuit.triggered.connect(self.close)
@@ -202,10 +200,6 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
             self.nokey_label_warn.setText('')
             self.nokey_textEdit_output.setStyleSheet('')
             self.nokey_label_warn.setStyleSheet('')
-
-    def call_sym_select_password_form(self):
-        self.select_password = sym_passwords_form.MainForm(self, "")
-        self.select_password.show()
 
     def sym_combobox_update(self):
         self.sym_label_warn.setText('')
