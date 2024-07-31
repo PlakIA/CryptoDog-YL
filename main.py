@@ -13,7 +13,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QFileDi
 import newkey_form
 import notepad
 from ui import main, about
-from сipher import Hash, B64, AESx, SingleDES, TripleDES, RC4
+from crypto.keyless import Hash, B64
+from crypto.symmetric import AESx, SingleDES, TripleDES, RC4
 
 
 class MainForm(QMainWindow, main.Ui_MainWindow):
