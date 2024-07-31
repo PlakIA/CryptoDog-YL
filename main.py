@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QFileDi
 
 import newkey_form
 import notepad
+from about import AboutForm
 from ui import main, about
 from crypto.keyless import Hash, B64
 from crypto.symmetric import AESx, SingleDES, TripleDES, RC4
@@ -527,16 +528,6 @@ class MainForm(QMainWindow, main.Ui_MainWindow):
                                          f'Status:\t{verified.status}\n'
                                          f'Fingerprint:\t{verified.pubkey_fingerprint}',
                                  msg_type=QMessageBox.Information)
-
-
-class AboutForm(QMainWindow, about.Ui_MainWindow):
-    def __init__(self, *args):
-        super().__init__()
-        self.setupUi(self)
-        self.toolButton_mail_author.clicked.connect(lambda: webbrowser.open('mailto:Plak.I.A@yandex.ru'))
-        self.toolButton_mail_publisher.clicked.connect(lambda: webbrowser.open('mailto:plaksin.network@gmail.com'))
-        self.toolButton_license.clicked.connect(
-            lambda: webbrowser.open('https://github.com/PlakIA/CryptoDog/blob/main/LICENSE'))
 
 
 def except_hook(cls, exception, traceback):
